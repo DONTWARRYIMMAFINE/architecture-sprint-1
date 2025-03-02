@@ -1,0 +1,3 @@
+
+    export type RemoteKeys = 'auth/ProtectedRoute' | 'auth/AuthRoutes' | 'auth/AuthContext' | 'auth/useAuth';
+    type PackageType<T> = T extends 'auth/useAuth' ? typeof import('auth/useAuth') :T extends 'auth/AuthContext' ? typeof import('auth/AuthContext') :T extends 'auth/AuthRoutes' ? typeof import('auth/AuthRoutes') :T extends 'auth/ProtectedRoute' ? typeof import('auth/ProtectedRoute') :any;
