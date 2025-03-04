@@ -1,0 +1,35 @@
+import React from "react";
+import ErrorIcon from "../images/error-icon.svg";
+
+import "../blocks/popup/popup.css";
+import SuccessIcon from "../images/success-icon.svg";
+import "../blocks/popup/_is-opened/popup_is-opened.css";
+
+export interface InfoTooltipProps {
+    isOpen: boolean;
+    onClose: () => void;
+    status: "success" | "fail" | null;
+}
+
+const InfoTooltip: React.FC<InfoTooltipProps> = ({isOpen, onClose, status}) => {
+    const icon = status === "success" ? SuccessIcon : ErrorIcon;
+    const text = status === "success"
+        ? "Вы успешно зарегистрировались"
+        : "Что-то пошло не так! Попробуйте ещё раз.";
+
+    return (
+        <div className={`popup ${isOpen && "popup_is-opened"}`}>
+            <div className="popup__content">
+                <form className="popup__form" noValidate>
+                    <button type="button" className="popup__close" onClick={onClose}></button>
+                    <div>
+                        <img className="popup__icon" src={icon} alt=""/>
+                        <p className="popup__status-message">{text}</p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+};
+
+export default InfoTooltip;

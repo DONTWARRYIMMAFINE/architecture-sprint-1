@@ -6,7 +6,7 @@ services:
     logging:
       driver: none
     healthcheck:
-      test:  echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
       interval: 10s
       timeout: 10s
       retries: 5
@@ -34,29 +34,98 @@ services:
       mongo:
         condition: service_healthy
     ports:
-      - 3001:3000
+      - 5000:5000
     healthcheck:
       interval: 10s
-      timeout: 2s 
-      start_period: 15s 
-      retries: 5 
+      timeout: 2s
+      start_period: 15s
+      retries: 5
       test: node healthcheck.js
 
-  frontend-test:
+  ui-microfrontend:
     build:
-      context: frontend
-      dockerfile: ../Dockerfile.frontend
-    command: yarn test:microfrontend
-    restart: 'no'
-    environment:
-          CI: true
-
-  frontend:
-    build:
-      context: frontend
-      dockerfile: ../Dockerfile.frontend
+      context: ./frontend/ui-microfrontend
+      dockerfile: Dockerfile
     ports:
-      - 3000:3000
+      - 3002:3002
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:3002" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  auth-microfrontend:
+    build:
+      context: ./frontend/auth-microfrontend
+      dockerfile: Dockerfile
+    ports:
+      - 3003:3003
     depends_on:
       backend:
         condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:3003" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  profile-microfrontend:
+    build:
+      context: ./frontend/profile-microfrontend
+      dockerfile: Dockerfile
+    ports:
+      - 3004:3004
+    depends_on:
+      ui-microfrontend:
+        condition: service_healthy
+      auth-microfrontend:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:3004" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  card-microfrontend:
+    build:
+      context: ./frontend/card-microfrontend
+      dockerfile: Dockerfile
+    ports:
+      - 3005:3005
+    depends_on:
+      ui-microfrontend:
+        condition: service_healthy
+      auth-microfrontend:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:3005" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  host-microfrontend:
+    build:
+      context: ./frontend/host-microfrontend
+      dockerfile: Dockerfile
+    ports:
+      - 3001:3001
+    depends_on:
+      ui-microfrontend:
+        condition: service_healthy
+      auth-microfrontend:
+        condition: service_healthy
+      profile-microfrontend:
+        condition: service_healthy
+      card-microfrontend:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:3001" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
