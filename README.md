@@ -59,4 +59,4 @@
 
 # Схема декомпозиции веб-приложения на Django на микросервисы (Задание 2)
 
-https://code.s3.yandex.net/software-architecture/file/arch_template_task2.drawio?etag=11d456142d50853451c2e6001736c0a8
+https://drive.google.com/file/d/1BRE1Lg2I5eNUOY0A3I920uTz-uYCnS06/view?usp=sharing
